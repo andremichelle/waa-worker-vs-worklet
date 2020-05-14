@@ -30,6 +30,7 @@ const loadWorklet = async (context, url, name) => {
 window.onload = () => {
     const runPureWorkletTest = async () => {
         const context = new AudioContext({latencyHint: 0.09, sampleRate: SAMPLE_RATE_HINT});
+        console.log(context.baseLatency, context.outputLatency);
         const node = await loadWorklet(context, "square-worklet.js", "square-worklet");
         node.connect(context.destination);
         return {

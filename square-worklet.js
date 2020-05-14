@@ -1,13 +1,11 @@
 const RENDER_QUANTUM = 128 | 0;
 
-const waveform = (phase, numHarmonics) => {
+const waveform = (phase, n) => {
     let out = 0.0;
-    for (let k = 0; k < 6; k++) {
-        for (let j = 1; j <= numHarmonics; j += 2) {
-            out += Math.sin(phase * j * 2.0 * Math.PI) * (2.0 / (j * Math.PI));
-        }
+    for (let j = 1; j <= n; j += 2) {
+        out += Math.sin(phase * j * 2.0 * Math.PI) * (2.0 / (j * Math.PI));
     }
-    return out * 0.1;
+    return out * 0.5;
 };
 
 registerProcessor("square-worklet", class extends AudioWorkletProcessor {
@@ -16,7 +14,7 @@ registerProcessor("square-worklet", class extends AudioWorkletProcessor {
 
         this.frequency = 60.0;
         this.maxHarmonics = Math.floor((sampleRate / 2) / this.frequency);
-        this.numHarmonics = 300;
+        this.numHarmonics = 1;
         this.phase = 0.0;
 
         console.log(`Worklet sampleRate: ${sampleRate}, maxHarmonics: ${this.maxHarmonics}`);

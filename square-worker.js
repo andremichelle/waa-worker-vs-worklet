@@ -8,17 +8,15 @@ let writeIndex = 0 | 0;
 let sampleRate = NaN;
 let frequency = 60.0;
 let maxHarmonics = NaN;
-let numHarmonics = 300;
+let numHarmonics = 1;
 let phase = 0.0;
 
-const waveform = phase => {
+const waveform = (phase, n) => {
     let out = 0.0;
-    for (let k = 0; k < 6; k++) {
-        for (let j = 1; j <= numHarmonics; j += 2) {
-            out += Math.sin(phase * j * 2.0 * Math.PI) * (2.0 / (j * Math.PI));
-        }
+    for (let j = 1; j <= n; j += 2) {
+        out += Math.sin(phase * j * 2.0 * Math.PI) * (2.0 / (j * Math.PI));
     }
-    return out * 0.1;
+    return out * 0.5;
 };
 
 const render = () => {
@@ -34,7 +32,7 @@ const render = () => {
     while (Atomics.load(indices, 0) + NUM_BUFFERS >= writeIndex) { // render towards play-head
         const offset = (writeIndex % NUM_BUFFERS) * RENDER_QUANTUM;
         for (let i = 0; i < RENDER_QUANTUM; i++) {
-            buffer[i + offset] = waveform(phase);
+            buffer[i + offset] = waveform(phase, numHarmonics);
             phase += frequency / sampleRate;
         }
         Atomics.store(indices, 1, ++writeIndex);
